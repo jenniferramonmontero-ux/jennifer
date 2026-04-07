@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La India - Sistema de Gestión</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --azul-profundo: #1a2951;
+            --azul-medio: #2d4a7c;
+            --azul-claro: #4a69bd;
+            --azul-suave: #6c8cd5;
+            --azul-muy-claro: #e8f1ff;
+            --dorado: #d4af37;
+            --blanco: #ffffff;
+            --gris-claro: #f5f7fa;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--azul-muy-claro) 0%, #fff 100%);
+            min-height: 100vh;
+            color: var(--azul-profundo);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-medio) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(26, 41, 81, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .logo-placeholder {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .tab-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid transparent;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            background: var(--dorado);
+            border-color: var(--dorado);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+        
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(26, 41, 81, 0.1);
+            border: 1px solid var(--azul-muy-claro);
+        }
+        
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8em;
+            color: var(--azul-profundo);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--azul-claro);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--azul-medio);
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--azul-muy-claro);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: var(--gris-claro);
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--azul-claro);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--azul-claro) 0%, var(--azul-suave) 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(74, 105, 189, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(74, 105, 189, 0.4);
+        }
+        
+        .btn-gold {
+            background: linear-gradient(135deg, var(--dorado) 0%, #f4d03f 100%);
+            color: var(--azul-profundo);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            background: linear-gradient(135deg, var(--azul-muy-claro) 0%, white 100%);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid var(--azul-claro);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--azul-profundo), var(--azul-claro), var(--azul-suave));
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(74, 105, 189, 0.3);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: var(--gris-claro);
+        }
+        
+        .product-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3em;
+            color: var(--azul-profundo);
+            margin-bottom: 10px;
+        }
+        
+        .product-description {
+            color: var(--azul-medio);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .product-price {
+            font-size: 1.5em;
+            color: var(--dorado);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            background: var(--azul-claro);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-bottom: 10px;
+        }
+        
+        .mesa-card {
+            background: white;
+            border: 3px solid var(--azul-muy-claro);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mesa-card:hover {
+            border-color: var(--azul-claro);
+            transform: scale(1.05);
+        }
+        
+        .mesa-card.ocupada {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border-color: #c0392b;
+        }
+        
+        .mesa-card.disponible {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .mesa-card.seleccionada {
+            background: linear-gradient(135deg, var(--dorado) 0%, #f4d03f 100%);
+            color: var(--azul-profundo);
+            border-color: var(--dorado);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.5);
+        }
+        
+        .mesa-numero {
+            font-size: 2em;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .mesa-capacidad {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .reserva-card {
+            background: linear-gradient(135deg, var(--azul-muy-claro) 0%, white 100%);
+            border-left: 5px solid var(--azul-claro);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .reserva-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 0.8em;
+            color: var(--azul-medio);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-size: 1.1em;
+            color: var(--azul-profundo);
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .carrito-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--gris-claro);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .carrito-total {
+            background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-medio) 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: right;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-top: 20px;
+        }
+        
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 2px solid var(--azul-muy-claro);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 41, 81, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        
+        .close-modal {
+            float: right;
+            font-size: 2em;
+            cursor: pointer;
+            color: var(--azul-medio);
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            color: var(--azul-profundo);
+            transform: rotate(90deg);
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quantity-btn {
+            background: var(--azul-claro);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .quantity-btn:hover {
+            background: var(--azul-profundo);
+            transform: scale(1.1);
+        }
+        
+        .banner-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(26, 41, 81, 0.2);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--azul-claro) 0%, var(--azul-suave) 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(74, 105, 189, 0.3);
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .nav-tabs {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-container">
+                        <img id="headerLogo" class="logo-placeholder" src="" alt="Logo" style="display: none;">
+                        <span id="logoText" style="font-size: 2em; color: var(--azul-profundo);">🍛</span>
+                    </div>
+                    <div>
+                        <h1>La India</h1>
+                        <p id="headerDireccion" style="font-size: 0.9em; opacity: 0.9;">Restaurante Indio</p>
+                    </div>
+                </div>
+                <div class="nav-tabs">
+                    <button class="tab-btn active" onclick="cambiarTab('inicio')">🏠 Inicio</button>
+                    <button class="tab-btn" onclick="cambiarTab('productos')">🍽️ Menú</button>
+                    <button class="tab-btn" onclick="cambiarTab('pedidos')">🛒 Pedidos</button>
+                    <button class="tab-btn" onclick="cambiarTab('reservas')">📅 Reservas</button>
+                    <button class="tab-btn" onclick="cambiarTab('mesas')">🪑 Mesas</button>
+                    <button class="tab-btn" onclick="cambiarTab('config')">⚙️ Config</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sección Inicio -->
+        <div id="inicio" class="content-section active">
+            <div class="card">
+                <img id="bannerImage" class="banner-image" src="" alt="Foto del lugar" style="display: none;">
+                <div id="bannerPlaceholder" style="background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-claro) 100%); height: 300px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2em; margin-bottom: 20px;">
+                    📸 Sube una foto de tu restaurante en Configuración
+                </div>
+                <h2 class="card-title">Bienvenido al Sistema de Gestión</h2>
+                <p style="font-size: 1.1em; line-height: 1.8; color: var(--azul-medio); margin-bottom: 30px;">
+                    Gestiona tu restaurante de manera eficiente: productos, pedidos, reservas y mesas, todo en un solo lugar.
+                </p>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="statProductos">0</div>
+                        <div class="stat-label">Productos en Menú</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, var(--dorado) 0%, #f4d03f 100%); color: var(--azul-profundo);">
+                        <div class="stat-number" id="statReservas">0</div>
+                        <div class="stat-label">Reservas Activas</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);">
+                        <div class="stat-number" id="statMesas">8</div>
+                        <div class="stat-label">Mesas Disponibles</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Productos -->
+        <div id="productos" class="content-section">
+            <div class="card">
+                <h2 class="card-title">Gestión de Productos</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3 style="color: var(--azul-medio); margin-bottom: 15px;">Agregar Nuevo Producto</h3>
+                        <div class="form-group">
+                            <label>Nombre del Producto</label>
+                            <input type="text" id="productoNombre" placeholder="Ej: Pollo Tikka Masala">
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="productoDescripcion" placeholder="Describe el plato..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio (€)</label>
+                            <input type="number" id="productoPrecio" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <select id="productoCategoria">
+                                <option value="entrada">🥗 Entrada</option>
+                                <option value="plato-principal">🍛 Plato Principal</option>
+                                <option value="bebida">🥤 Bebida</option>
+                                <option value="postre">🍰 Postre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Foto del Producto</label>
+                            <input type="file" id="productoFoto" accept="image/*" onchange="previsualizarImagen('productoFoto', 'productoPreview')">
+                            <img id="productoPreview" class="image-preview" style="display: none;">
+                        </div>
+                        <button class="btn btn-gold" onclick="agregarProducto()">➕ Agregar Producto</button>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--azul-medio); margin-bottom: 15px;">Lista de Productos</h3>
+                        <div id="listaProductos"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">Menú Completo</h2>
+                <div style="margin-bottom: 20px;">
+                    <button class="btn" onclick="filtrarProductos('todos')" style="margin-right: 10px;">Todos</button>
+                    <button class="btn" onclick="filtrarProductos('entrada')" style="margin-right: 10px;">Entradas</button>
+                    <button class="btn" onclick="filtrarProductos('plato-principal')" style="margin-right: 10px;">Platos Principales</button>
+                    <button class="btn" onclick="filtrarProductos('bebida')" style="margin-right: 10px;">Bebidas</button>
+                    <button class="btn" onclick="filtrarProductos('postre')">Postres</button>
+                </div>
+                <div id="menuProductos" class="grid-3"></div>
+            </div>
+        </div>
+
+        <!-- Sección Pedidos -->
+        <div id="pedidos" class="content-section">
+            <div class="card">
+                <h2 class="card-title">Realizar Pedido</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3 style="color: var(--azul-medio); margin-bottom: 15px;">Productos Disponibles</h3>
+                        <div id="productosParaPedido" class="grid-2"></div>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--azul-medio); margin-bottom: 15px;">Carrito de Pedido</h3>
+                        <div id="carritoPedido"></div>
+                        <div class="carrito-total">
+                            Total: <span id="totalPedido">0.00</span> €
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>Nombre del Cliente</label>
+                            <input type="text" id="nombreCliente" placeholder="Nombre completo">
+                        </div>
+                        <div class="form-group">
+                            <label>Mesa</label>
+                            <select id="mesaPedido">
+                                <option value="">Seleccionar mesa...</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-gold" onclick="generarFactura()" style="width: 100%; margin-top: 10px;">📄 Generar Factura PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Reservas -->
+        <div id="reservas" class="content-section">
+            <div class="card">
+                <h2 class="card-title">Gestión de Reservas</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3 style="color: var(--azul-medio); margin-bottom: 15px;">Nueva Reserva</h3>
+                        <div class="form-group">
+                            <label>Nombre del Cliente</label>
+                            <input type="text" id="reservaNombre" placeholder="Nombre completo">
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <input type="date" id="reservaFecha">
+                        </div>
+                        <div class="form-group">
+                            <label>Hora</label>
+                            <input type="time" id="reservaHora">
+                        </div>
+                        <div class="form-group">
+                            <label>Número de Personas</label>
+                            <input type="number" id="reservaPersonas" min="1" max="10" value="2">
+                        </div>
+                        <div class="form-group">
+                            <label>Mesa</label>
+                            <select id="reservaMesa">
+                                <option value="">Seleccionar mesa...</option>
+                                <option value="1">Mesa 1 (2 personas)</option>
+                                <option value="2">Mesa 2 (4 personas)</option>
+                                <option value="3">Mesa 3 (4 personas)</option>
+                                <option value="4">Mesa 4 (6 personas)</option>
+                                <option value="5">Mesa 5 (2 personas)</option>
+                                <option value="6">Mesa 6 (8 personas)</option>
+                                <option value="7">Mesa 7 (4 personas)</option>
+                                <option value="8">Mesa 8 (2 personas)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="text" id="reservaTelefono" placeholder="+34 600 000 000">
+                        </div>
+                        <button class="btn btn-gold" onclick="agregarReserva()">📅 Crear Reserva</button>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--azul-medio); margin-bottom: 15px;">Reservas Activas</h3>
+                        <div id="listaReservas"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Mesas -->
+        <div id="mesas" class="content-section">
+            <div class="card">
+                <h2 class="card-title">Estado de las Mesas</h2>
+                <div class="grid-3" id="estadoMesas"></div>
+            </div>
+        </div>
+
+        <!-- Sección Configuración -->
+        <div id="config" class="content-section">
+            <div class="card">
+                <h2 class="card-title">Configuración del Restaurante</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="form-group">
+                            <label>Nombre del Restaurante</label>
+                            <input type="text" id="configNombre" value="La India">
+                        </div>
+                        <div class="form-group">
+                            <label>Dirección</label>
+                            <input type="text" id="configDireccion" placeholder="Calle Principal, 123, Ciudad">
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="text" id="configTelefono" placeholder="+34 900 000 000">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" id="configEmail" placeholder="info@laindia.com">
+                        </div>
+                        <button class="btn" onclick="guardarConfiguracion()">💾 Guardar Configuración</button>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label>Logo del Restaurante</label>
+                            <input type="file" id="configLogo" accept="image/*" onchange="previsualizarImagen('configLogo', 'logoPreview')">
+                            <img id="logoPreview" class="image-preview" style="display: none;">
+                        </div>
+                        <div class="form-group">
+                            <label>Foto del Lugar</label>
+                            <input type="file" id="configFotoLugar" accept="image/*" onchange="previsualizarImagen('configFotoLugar', 'lugarPreview')">
+                            <img id="lugarPreview" class="image-preview" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado global de la aplicación
+        const app = {
+            productos: [],
+            reservas: [],
+            mesas: [
+                {numero: 1, capacidad: 2, estado: 'disponible'},
+                {numero: 2, capacidad: 4, estado: 'disponible'},
+                {numero: 3, capacidad: 4, estado: 'disponible'},
+                {numero: 4, capacidad: 6, estado: 'disponible'},
+                {numero: 5, capacidad: 2, estado: 'disponible'},
+                {numero: 6, capacidad: 8, estado: 'disponible'},
+                {numero: 7, capacidad: 4, estado: 'disponible'},
+                {numero: 8, capacidad: 2, estado: 'disponible'}
+            ],
+            carrito: [],
+            config: {
+                nombre: 'La India',
+                direccion: '',
+                telefono: '',
+                email: '',
+                logo: '',
+                fotoLugar: ''
+            },
+            filtroActual: 'todos'
+        };
+
+        // ── PERSISTENCIA ──────────────────────────────────────────────
+        function guardarDatos() {
+            try {
+                localStorage.setItem('laindia_productos', JSON.stringify(app.productos));
+                localStorage.setItem('laindia_reservas', JSON.stringify(app.reservas));
+                localStorage.setItem('laindia_mesas', JSON.stringify(app.mesas));
+                localStorage.setItem('laindia_config', JSON.stringify(app.config));
+            } catch(e) {
+                console.warn('No se pudo guardar en localStorage:', e);
+            }
+        }
+
+        function cargarDatos() {
+            try {
+                const productos = localStorage.getItem('laindia_productos');
+                if (productos) app.productos = JSON.parse(productos);
+
+                const reservas = localStorage.getItem('laindia_reservas');
+                if (reservas) app.reservas = JSON.parse(reservas);
+
+                const mesas = localStorage.getItem('laindia_mesas');
+                if (mesas) app.mesas = JSON.parse(mesas);
+
+                const config = localStorage.getItem('laindia_config');
+                if (config) {
+                    app.config = JSON.parse(config);
+                    // Restaurar campos del formulario de config
+                    document.getElementById('configNombre').value = app.config.nombre || '';
+                    document.getElementById('configDireccion').value = app.config.direccion || '';
+                    document.getElementById('configTelefono').value = app.config.telefono || '';
+                    document.getElementById('configEmail').value = app.config.email || '';
+                    // Restaurar imágenes
+                    if (app.config.logo) {
+                        const lugarLogoPreview = document.getElementById('logoPreviewConfig');
+                        if (lugarLogoPreview) { lugarLogoPreview.src = app.config.logo; lugarLogoPreview.style.display = 'block'; }
+                    }
+                    if (app.config.fotoLugar) {
+                        const lugarPreview = document.getElementById('lugarPreview');
+                        if (lugarPreview) { lugarPreview.src = app.config.fotoLugar; lugarPreview.style.display = 'block'; }
+                    }
+                }
+            } catch(e) {
+                console.warn('No se pudo cargar desde localStorage:', e);
+            }
+        }
+        // ─────────────────────────────────────────────────────────────
+
+        // Funciones de navegación
+        function cambiarTab(tab) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tab === 'mesas') renderizarMesas();
+            if (tab === 'pedidos') renderizarProductosParaPedido();
+            if (tab === 'inicio') actualizarEstadisticas();
+        }
+
+        // Función para previsualizar imágenes
+        function previsualizarImagen(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Gestión de Productos
+        function agregarProducto() {
+            const nombre = document.getElementById('productoNombre').value;
+            const descripcion = document.getElementById('productoDescripcion').value;
+            const precio = parseFloat(document.getElementById('productoPrecio').value);
+            const categoria = document.getElementById('productoCategoria').value;
+            const fotoInput = document.getElementById('productoFoto');
+            
+            if (!nombre || !precio) {
+                alert('Por favor completa el nombre y precio del producto');
+                return;
+            }
+            
+            const reader = new FileReader();
+            const producto = {
+                id: Date.now(),
+                nombre,
+                descripcion,
+                precio,
+                categoria,
+                foto: ''
+            };
+            
+            if (fotoInput.files && fotoInput.files[0]) {
+                reader.onload = function(e) {
+                    producto.foto = e.target.result;
+                    app.productos.push(producto);
+                    guardarDatos();
+                    renderizarProductos();
+                    renderizarMenu();
+                    limpiarFormularioProducto();
+                };
+                reader.readAsDataURL(fotoInput.files[0]);
+            } else {
+                app.productos.push(producto);
+                guardarDatos();
+                renderizarProductos();
+                renderizarMenu();
+                limpiarFormularioProducto();
+            }
+        }
+
+        function limpiarFormularioProducto() {
+            document.getElementById('productoNombre').value = '';
+            document.getElementById('productoDescripcion').value = '';
+            document.getElementById('productoPrecio').value = '';
+            document.getElementById('productoFoto').value = '';
+            document.getElementById('productoPreview').style.display = 'none';
+        }
+
+        function renderizarProductos() {
+            const lista = document.getElementById('listaProductos');
+            lista.innerHTML = '';
+            
+            app.productos.forEach(producto => {
+                const categoriaEmoji = {
+                    'entrada': '🥗',
+                    'plato-principal': '🍛',
+                    'bebida': '🥤',
+                    'postre': '🍰'
+                };
+                
+                lista.innerHTML += `
+                    <div style="background: var(--gris-claro); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--azul-claro);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: var(--azul-profundo);">${categoriaEmoji[producto.categoria]} ${producto.nombre}</strong>
+                                <div style="font-size: 0.9em; color: var(--azul-medio);">${producto.precio.toFixed(2)} €</div>
+                            </div>
+                            <button class="btn btn-danger" onclick="eliminarProducto(${producto.id})" style="padding: 8px 15px; font-size: 0.9em;">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function eliminarProducto(id) {
+            if (confirm('¿Eliminar este producto?')) {
+                app.productos = app.productos.filter(p => p.id !== id);
+                guardarDatos();
+                renderizarProductos();
+                renderizarMenu();
+            }
+        }
+
+        function filtrarProductos(categoria) {
+            app.filtroActual = categoria;
+            renderizarMenu();
+        }
+
+        function renderizarMenu() {
+            const menu = document.getElementById('menuProductos');
+            const productosFiltrados = app.filtroActual === 'todos' 
+                ? app.productos 
+                : app.productos.filter(p => p.categoria === app.filtroActual);
+            
+            if (productosFiltrados.length === 0) {
+                menu.innerHTML = '<p style="text-align: center; color: var(--azul-medio); grid-column: 1/-1;">No hay productos en esta categoría</p>';
+                return;
+            }
+            
+            menu.innerHTML = productosFiltrados.map(producto => {
+                const categoriaLabels = {
+                    'entrada': 'Entrada',
+                    'plato-principal': 'Plato Principal',
+                    'bebida': 'Bebida',
+                    'postre': 'Postre'
+                };
+                
+                return `
+                    <div class="product-card">
+                        ${producto.foto ? `<img src="${producto.foto}" class="product-image">` : `<div class="product-image" style="display: flex; align-items: center; justify-content: center; font-size: 3em;">🍽️</div>`}
+                        <div class="category-badge">${categoriaLabels[producto.categoria]}</div>
+                        <div class="product-name">${producto.nombre}</div>
+                        <div class="product-description">${producto.descripcion || 'Sin descripción'}</div>
+                        <div class="product-price">${producto.precio.toFixed(2)} €</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Gestión de Pedidos
+        function renderizarProductosParaPedido() {
+            const container = document.getElementById('productosParaPedido');
+            container.innerHTML = app.productos.map(producto => `
+                <div style="background: var(--gris-claro); padding: 15px; border-radius: 10px; border: 2px solid var(--azul-muy-claro);">
+                    <strong style="color: var(--azul-profundo); display: block; margin-bottom: 5px;">${producto.nombre}</strong>
+                    <div style="color: var(--dorado); font-weight: 600; margin-bottom: 10px;">${producto.precio.toFixed(2)} €</div>
+                    <button class="btn" onclick="agregarAlCarrito(${producto.id})" style="width: 100%; padding: 10px; font-size: 0.9em;">➕ Agregar</button>
+                </div>
+            `).join('');
+            
+            // Actualizar select de mesas
+            const selectMesas = document.getElementById('mesaPedido');
+            selectMesas.innerHTML = '<option value="">Seleccionar mesa...</option>' +
+                app.mesas.filter(m => m.estado === 'disponible').map(m => 
+                    `<option value="${m.numero}">Mesa ${m.numero} (${m.capacidad} personas)</option>`
+                ).join('');
+            
+            renderizarCarrito();
+        }
+
+        function agregarAlCarrito(productoId) {
+            const producto = app.productos.find(p => p.id === productoId);
+            const itemExistente = app.carrito.find(item => item.id === productoId);
+            
+            if (itemExistente) {
+                itemExistente.cantidad++;
+            } else {
+                app.carrito.push({...producto, cantidad: 1});
+            }
+            
+            renderizarCarrito();
+        }
+
+        function renderizarCarrito() {
+            const container = document.getElementById('carritoPedido');
+            
+            if (app.carrito.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--azul-medio); padding: 20px;">El carrito está vacío</p>';
+                document.getElementById('totalPedido').textContent = '0.00';
+                return;
+            }
+            
+            container.innerHTML = app.carrito.map(item => `
+                <div class="carrito-item">
+                    <div>
+                        <strong style="color: var(--azul-profundo);">${item.nombre}</strong>
+                        <div style="font-size: 0.9em; color: var(--azul-medio);">${item.precio.toFixed(2)} € x ${item.cantidad}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="cambiarCantidad(${item.id}, -1)">-</button>
+                            <span style="font-weight: 600; min-width: 30px; text-align: center;">${item.cantidad}</span>
+                            <button class="quantity-btn" onclick="cambiarCantidad(${item.id}, 1)">+</button>
+                        </div>
+                        <button class="btn btn-danger" onclick="eliminarDelCarrito(${item.id})" style="padding: 8px 15px; font-size: 0.9em;">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            const total = app.carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            document.getElementById('totalPedido').textContent = total.toFixed(2);
+        }
+
+        function cambiarCantidad(productoId, cambio) {
+            const item = app.carrito.find(i => i.id === productoId);
+            if (item) {
+                item.cantidad += cambio;
+                if (item.cantidad <= 0) {
+                    eliminarDelCarrito(productoId);
+                } else {
+                    renderizarCarrito();
+                }
+            }
+        }
+
+        function eliminarDelCarrito(productoId) {
+            app.carrito = app.carrito.filter(item => item.id !== productoId);
+            renderizarCarrito();
+        }
+
+        // Generar Factura PDF
+        function generarFactura() {
+            const nombreCliente = document.getElementById('nombreCliente').value;
+            const mesaNumero = document.getElementById('mesaPedido').value;
+            
+            if (!nombreCliente) {
+                alert('Por favor ingresa el nombre del cliente');
+                return;
+            }
+            
+            if (app.carrito.length === 0) {
+                alert('El carrito está vacío');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Colores en RGB
+            const azulProfundo = [26, 41, 81];
+            const azulClaro = [74, 105, 189];
+            const dorado = [212, 175, 55];
+            
+            // Encabezado
+            doc.setFillColor(...azulProfundo);
+            doc.rect(0, 0, 210, 40, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.text(app.config.nombre || 'La India', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.text('Restaurante Indio', 105, 28, { align: 'center' });
+            if (app.config.direccion) {
+                doc.text(app.config.direccion, 105, 34, { align: 'center' });
+            }
+            
+            // Información de la factura
+            doc.setTextColor(...azulProfundo);
+            doc.setFontSize(16);
+            doc.text('FACTURA', 20, 55);
+            
+            doc.setFontSize(10);
+            const fecha = new Date().toLocaleDateString('es-ES');
+            const hora = new Date().toLocaleTimeString('es-ES');
+            
+            doc.text(`Fecha: ${fecha}`, 20, 65);
+            doc.text(`Hora: ${hora}`, 20, 72);
+            doc.text(`Cliente: ${nombreCliente}`, 20, 79);
+            if (mesaNumero) {
+                doc.text(`Mesa: ${mesaNumero}`, 20, 86);
+            }
+            
+            // Línea divisoria
+            doc.setDrawColor(...azulClaro);
+            doc.setLineWidth(0.5);
+            doc.line(20, 92, 190, 92);
+            
+            // Tabla de productos
+            let y = 102;
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('Producto', 20, y);
+            doc.text('Cant.', 120, y);
+            doc.text('Precio', 145, y);
+            doc.text('Total', 170, y);
+            
+            doc.setFont(undefined, 'normal');
+            y += 8;
+            
+            let subtotal = 0;
+            app.carrito.forEach(item => {
+                const totalItem = item.precio * item.cantidad;
+                subtotal += totalItem;
+                
+                // Truncar nombre si es muy largo
+                const nombreCorto = item.nombre.length > 30 ? item.nombre.substring(0, 27) + '...' : item.nombre;
+                
+                doc.text(nombreCorto, 20, y);
+                doc.text(item.cantidad.toString(), 120, y);
+                doc.text(`${item.precio.toFixed(2)} €`, 145, y);
+                doc.text(`${totalItem.toFixed(2)} €`, 170, y);
+                
+                // Descripción si existe
+                if (item.descripcion && item.descripcion.length > 0) {
+                    y += 5;
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 100, 100);
+                    const descripcionCorta = item.descripcion.length > 50 ? item.descripcion.substring(0, 47) + '...' : item.descripcion;
+                    doc.text(descripcionCorta, 25, y);
+                    doc.setTextColor(...azulProfundo);
+                    doc.setFontSize(11);
+                }
+                
+                y += 8;
+            });
+            
+            // Total
+            doc.setLineWidth(0.5);
+            doc.line(20, y, 190, y);
+            y += 10;
+            
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(...dorado);
+            doc.text('TOTAL:', 145, y);
+            doc.text(`${subtotal.toFixed(2)} €`, 170, y);
+            
+            // Pie de página
+            doc.setFontSize(9);
+            doc.setTextColor(...azulProfundo);
+            doc.setFont(undefined, 'normal');
+            doc.text('¡Gracias por su visita!', 105, 280, { align: 'center' });
+            
+            if (app.config.telefono) {
+                doc.text(`Tel: ${app.config.telefono}`, 105, 287, { align: 'center' });
+            }
+            
+            // Guardar PDF
+            const nombreArchivo = `factura_${nombreCliente.replace(/\s/g, '_')}_${Date.now()}.pdf`;
+            doc.save(nombreArchivo);
+            
+            // Limpiar carrito después de generar factura
+            if (confirm('Factura generada exitosamente. ¿Deseas limpiar el carrito?')) {
+                app.carrito = [];
+                document.getElementById('nombreCliente').value = '';
+                document.getElementById('mesaPedido').value = '';
+                renderizarCarrito();
+            }
+        }
+
+        // Gestión de Reservas
+        function agregarReserva() {
+            const nombre = document.getElementById('reservaNombre').value;
+            const fecha = document.getElementById('reservaFecha').value;
+            const hora = document.getElementById('reservaHora').value;
+            const personas = document.getElementById('reservaPersonas').value;
+            const mesa = document.getElementById('reservaMesa').value;
+            const telefono = document.getElementById('reservaTelefono').value;
+            
+            if (!nombre || !fecha || !hora || !mesa) {
+                alert('Por favor completa todos los campos obligatorios');
+                return;
+            }
+            
+            const reserva = {
+                id: Date.now(),
+                nombre,
+                fecha,
+                hora,
+                personas: parseInt(personas),
+                mesa: parseInt(mesa),
+                telefono
+            };
+            
+            app.reservas.push(reserva);
+            
+            // Marcar mesa como ocupada
+            const mesaObj = app.mesas.find(m => m.numero === parseInt(mesa));
+            if (mesaObj) {
+                mesaObj.estado = 'ocupada';
+            }
+            
+            guardarDatos();
+            renderizarReservas();
+            limpiarFormularioReserva();
+            alert('Reserva creada exitosamente');
+        }
+
+        function limpiarFormularioReserva() {
+            document.getElementById('reservaNombre').value = '';
+            document.getElementById('reservaFecha').value = '';
+            document.getElementById('reservaHora').value = '';
+            document.getElementById('reservaPersonas').value = '2';
+            document.getElementById('reservaMesa').value = '';
+            document.getElementById('reservaTelefono').value = '';
+        }
+
+        function renderizarReservas() {
+            const lista = document.getElementById('listaReservas');
+            
+            if (app.reservas.length === 0) {
+                lista.innerHTML = '<p style="text-align: center; color: var(--azul-medio); padding: 20px;">No hay reservas activas</p>';
+                return;
+            }
+            
+            lista.innerHTML = app.reservas.map(reserva => `
+                <div class="reserva-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong style="font-size: 1.2em; color: var(--azul-profundo);">👤 ${reserva.nombre}</strong>
+                        <button class="btn btn-danger" onclick="cancelarReserva(${reserva.id})" style="padding: 8px 15px; font-size: 0.9em;">Cancelar</button>
+                    </div>
+                    <div class="reserva-info">
+                        <div class="info-item">
+                            <span class="info-label">📅 Fecha</span>
+                            <span class="info-value">${new Date(reserva.fecha).toLocaleDateString('es-ES')}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">🕐 Hora</span>
+                            <span class="info-value">${reserva.hora}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">👥 Personas</span>
+                            <span class="info-value">${reserva.personas}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">🪑 Mesa</span>
+                            <span class="info-value">Mesa ${reserva.mesa}</span>
+                        </div>
+                        ${reserva.telefono ? `
+                        <div class="info-item">
+                            <span class="info-label">📞 Teléfono</span>
+                            <span class="info-value">${reserva.telefono}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function cancelarReserva(id) {
+            if (confirm('¿Cancelar esta reserva?')) {
+                const reserva = app.reservas.find(r => r.id === id);
+                if (reserva) {
+                    // Liberar mesa
+                    const mesaObj = app.mesas.find(m => m.numero === reserva.mesa);
+                    if (mesaObj) {
+                        mesaObj.estado = 'disponible';
+                    }
+                }
+                
+                app.reservas = app.reservas.filter(r => r.id !== id);
+                guardarDatos();
+                renderizarReservas();
+                renderizarMesas();
+            }
+        }
+
+        // Gestión de Mesas
+        function renderizarMesas() {
+            const container = document.getElementById('estadoMesas');
+            container.innerHTML = app.mesas.map(mesa => {
+                const claseEstado = mesa.estado === 'ocupada' ? 'ocupada' : 'disponible';
+                return `
+                    <div class="mesa-card ${claseEstado}">
+                        <div class="mesa-numero">Mesa ${mesa.numero}</div>
+                        <div class="mesa-capacidad">${mesa.capacidad} personas</div>
+                        <div style="margin-top: 10px; font-weight: 600;">
+                            ${mesa.estado === 'ocupada' ? '🔴 Ocupada' : '🟢 Disponible'}
+                        </div>
+                        ${mesa.estado === 'ocupada' ? 
+                            `<button class="btn" onclick="liberarMesa(${mesa.numero})" style="margin-top: 10px; width: 100%; padding: 8px; font-size: 0.9em;">Liberar</button>` : 
+                            ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function liberarMesa(numero) {
+            const mesa = app.mesas.find(m => m.numero === numero);
+            if (mesa) {
+                mesa.estado = 'disponible';
+                guardarDatos();
+                renderizarMesas();
+            }
+        }
+
+        // Configuración
+        function guardarConfiguracion() {
+            app.config.nombre = document.getElementById('configNombre').value;
+            app.config.direccion = document.getElementById('configDireccion').value;
+            app.config.telefono = document.getElementById('configTelefono').value;
+            app.config.email = document.getElementById('configEmail').value;
+            
+            // Logo
+            const logoInput = document.getElementById('configLogo');
+            if (logoInput.files && logoInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    app.config.logo = e.target.result;
+                    guardarDatos();
+                    actualizarHeader();
+                };
+                reader.readAsDataURL(logoInput.files[0]);
+            }
+            
+            // Foto del lugar
+            const fotoInput = document.getElementById('configFotoLugar');
+            if (fotoInput.files && fotoInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    app.config.fotoLugar = e.target.result;
+                    guardarDatos();
+                    actualizarBanner();
+                };
+                reader.readAsDataURL(fotoInput.files[0]);
+            }
+            
+            guardarDatos();
+            actualizarHeader();
+            alert('Configuración guardada exitosamente ✅');
+        }
+
+        function actualizarHeader() {
+            const headerLogo = document.getElementById('headerLogo');
+            const logoText = document.getElementById('logoText');
+            const headerDireccion = document.getElementById('headerDireccion');
+            
+            if (app.config.logo) {
+                headerLogo.src = app.config.logo;
+                headerLogo.style.display = 'block';
+                logoText.style.display = 'none';
+            }
+            
+            if (app.config.direccion) {
+                headerDireccion.textContent = app.config.direccion;
+            }
+        }
+
+        function actualizarBanner() {
+            const bannerImage = document.getElementById('bannerImage');
+            const bannerPlaceholder = document.getElementById('bannerPlaceholder');
+            
+            if (app.config.fotoLugar) {
+                bannerImage.src = app.config.fotoLugar;
+                bannerImage.style.display = 'block';
+                bannerPlaceholder.style.display = 'none';
+            }
+        }
+
+        function actualizarEstadisticas() {
+            document.getElementById('statProductos').textContent = app.productos.length;
+            document.getElementById('statReservas').textContent = app.reservas.length;
+            const mesasDisponibles = app.mesas.filter(m => m.estado === 'disponible').length;
+            document.getElementById('statMesas').textContent = mesasDisponibles;
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarDatos();
+            renderizarMesas();
+            renderizarProductos();
+            renderizarMenu();
+            renderizarReservas();
+            actualizarEstadisticas();
+            actualizarHeader();
+            actualizarBanner();
+            
+            // Configurar fecha mínima para reservas (hoy)
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('reservaFecha').min = hoy;
+        });
+    </script>
+</body>
+</html>
